@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'dart:math' as math;
 
-// Definición de colores base
+// Colores base
 const Color _kPrimaryColor = Color(0xFF2F544D); // Verde oscuro
 const Color _kAccentColor = Color(0xFFE9C589); // Crema/beige
 const Color _kBackgroundColor = Color(0xFFF7F7F7); // Fondo ligero
@@ -19,41 +19,61 @@ class HomePage extends StatelessWidget {
 
     return Scaffold(
       backgroundColor: _kBackgroundColor,
-      appBar: AppBar(
-        elevation: 0,
-        title: const Text(
-          'HABITALINK',
-          style: TextStyle(fontWeight: FontWeight.bold, color: Colors.white),
-        ),
-        actions: [
-          TextButton(
-            onPressed: () {},
-            child: const Text(
-              'Inicio',
-              style: TextStyle(color: Colors.white70, fontSize: 18),
+      appBar: PreferredSize(
+        preferredSize: const Size.fromHeight(160),
+        child: Column(
+          children: [
+            // Fila superior: logo centrado y botón de iniciar sesión a la derecha
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: kPadding, vertical: 8),
+              child: Row(
+                children: [
+                  const Spacer(),
+                  // Logo centrado
+                  Center(
+                    child: Image.asset(
+                      'assets/logo/LogoSinFondo.png', // <-- PON AQUÍ TU IMAGEN
+                      height: 100,
+                      fit: BoxFit.contain,
+                    ),
+                  ),
+                  const Spacer(),
+                  ElevatedButton(
+                    onPressed: () {},
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: _kAccentColor,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(30),
+                      ),
+                      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                    ),
+                    child: const Text(
+                      'Iniciar sesión',
+                      style: TextStyle(
+                        color: _kPrimaryColor,
+                        fontWeight: FontWeight.bold,
+                        fontSize: 16,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
             ),
-          ),
-          TextButton(
-            onPressed: () {},
-            child: const Text(
-              'Sesión',
-              style: TextStyle(
-                  color: Colors.white, fontWeight: FontWeight.bold, fontSize: 18),
+            // Menú fino
+            Container(
+              color: _kPrimaryColor,
+              height: 40,
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceAround,
+                children: const [
+                  _NavMenuItem(title: 'Comprar'),
+                  _NavMenuItem(title: 'Alquilar'),
+                  _NavMenuItem(title: 'Valoración'),
+                  _NavMenuItem(title: 'Favoritos'),
+                ],
+              ),
             ),
-          ),
-          const SizedBox(width: 8),
-        ],
-        bottom: const PreferredSize(
-          preferredSize: Size.fromHeight(50.0),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceAround,
-            children: [
-              _NavMenuItem(title: 'Comprar'),
-              _NavMenuItem(title: 'Alquilar'),
-              _NavMenuItem(title: 'Valoración'),
-              _NavMenuItem(title: 'Favoritos'),
-            ],
-          ),
+          ],
         ),
       ),
       body: SingleChildScrollView(
@@ -66,13 +86,12 @@ class HomePage extends StatelessWidget {
               padding: const EdgeInsets.symmetric(horizontal: kPadding),
               child: const Text(
                 'Conecta con tu espacio ideal',
-                style: TextStyle(
-                    fontSize: 32, fontWeight: FontWeight.w600, color: _kPrimaryColor),
+                style: TextStyle(fontSize: 32, fontWeight: FontWeight.w600, color: _kPrimaryColor),
               ),
             ),
             const SizedBox(height: 30),
 
-            // SearchBar
+            // SearchBar con dropdown
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: kPadding),
               child: SizedBox(height: 60, child: _SearchBarWidget()),
@@ -84,8 +103,7 @@ class HomePage extends StatelessWidget {
               padding: const EdgeInsets.symmetric(horizontal: kPadding),
               child: const Text(
                 'Explora nuevas posibilidades',
-                style: TextStyle(
-                    fontSize: 24, fontWeight: FontWeight.bold, color: _kPrimaryColor),
+                style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold, color: _kPrimaryColor),
               ),
             ),
             Padding(
@@ -115,8 +133,7 @@ class HomePage extends StatelessWidget {
                         children: [
                           _PropertyCard(
                             imageUrl: 'assets/engels_volkers/ref_w02zvw0/1.png',
-                            title:
-                                'Casa Palacio en el corazón de Santa Cruz con gran Piscina',
+                            title: 'Casa Palacio en el corazón de Santa Cruz con gran Piscina',
                             price: '380.000€',
                             cardWidth: cardWidth,
                             cardHeight: cardHeight,
@@ -124,8 +141,7 @@ class HomePage extends StatelessWidget {
                           const SizedBox(width: kMargin),
                           _PropertyCard(
                             imageUrl: 'assets/engels_volkers/ref_w02uxx4/1.png',
-                            title:
-                                'Casa o chalet Independiente en venta en Santa Cruz - Alfalfa Centro, Sevilla',
+                            title: 'Casa o chalet Independiente en venta en Santa Cruz - Alfalfa Centro, Sevilla',
                             price: '3.400.000€',
                             cardWidth: cardWidth,
                             cardHeight: cardHeight,
@@ -141,7 +157,7 @@ class HomePage extends StatelessWidget {
           ],
         ),
       ),
-      bottomNavigationBar: const _FooterWidget(), // footer más compacto
+      bottomNavigationBar: const _FooterWidget(compact: true),
     );
   }
 }
@@ -156,14 +172,22 @@ class _NavMenuItem extends StatelessWidget {
   Widget build(BuildContext context) {
     return TextButton(
       onPressed: () {},
-      child: Text(title,
-          style: const TextStyle(color: Colors.white, fontWeight: FontWeight.w500, fontSize: 18)),
+      child: Text(title, style: const TextStyle(color: Colors.white, fontWeight: FontWeight.w500, fontSize: 16)),
     );
   }
 }
 
-class _SearchBarWidget extends StatelessWidget {
+// SearchBar con dropdown de filtros
+class _SearchBarWidget extends StatefulWidget {
   const _SearchBarWidget();
+
+  @override
+  State<_SearchBarWidget> createState() => _SearchBarWidgetState();
+}
+
+class _SearchBarWidgetState extends State<_SearchBarWidget> {
+  String selectedFilter = 'Vivienda';
+  final List<String> filters = ['Vivienda', 'Obra Nueva', 'Oficina', 'Garaje', 'Localidad'];
 
   @override
   Widget build(BuildContext context) {
@@ -175,11 +199,24 @@ class _SearchBarWidget extends StatelessWidget {
       ),
       child: Row(
         children: [
-          TextButton.icon(
-            onPressed: () {},
-            icon: const Icon(Icons.keyboard_arrow_down, color: _kPrimaryColor, size: 26),
-            label: const Text('Filtrar',
-                style: TextStyle(color: _kPrimaryColor, fontSize: 18)),
+          DropdownButtonHideUnderline(
+            child: DropdownButton<String>(
+              value: selectedFilter,
+              icon: const Icon(Icons.keyboard_arrow_down, color: _kPrimaryColor, size: 26),
+              dropdownColor: _kAccentColor,
+              style: const TextStyle(color: _kPrimaryColor, fontSize: 18),
+              items: filters.map((filter) => DropdownMenuItem(
+                value: filter,
+                child: Text(filter),
+              )).toList(),
+              onChanged: (value) {
+                if (value != null) {
+                  setState(() {
+                    selectedFilter = value;
+                  });
+                }
+              },
+            ),
           ),
           Container(width: 1, height: 36, color: Colors.grey[400]),
           const SizedBox(width: 12),
@@ -232,7 +269,6 @@ class _PropertyCard extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // Imagen centrada
           ClipRRect(
             borderRadius: const BorderRadius.vertical(top: Radius.circular(12)),
             child: SizedBox(
@@ -258,14 +294,9 @@ class _PropertyCard extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(title,
-                    style: const TextStyle(fontSize: 18),
-                    maxLines: 2,
-                    overflow: TextOverflow.ellipsis),
+                Text(title, style: const TextStyle(fontSize: 18), maxLines: 2, overflow: TextOverflow.ellipsis),
                 const SizedBox(height: 12),
-                Text(price,
-                    style: const TextStyle(
-                        fontSize: 24, fontWeight: FontWeight.bold, color: _kPrimaryColor)),
+                Text(price, style: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold, color: _kPrimaryColor)),
                 const SizedBox(height: 12),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.end,
@@ -275,9 +306,7 @@ class _PropertyCard extends StatelessWidget {
                       style: TextButton.styleFrom(padding: EdgeInsets.zero),
                       child: const Row(
                         children: [
-                          Text('más detalles',
-                              style: TextStyle(
-                                  color: _kPrimaryColor, decoration: TextDecoration.underline)),
+                          Text('más detalles', style: TextStyle(color: _kPrimaryColor, decoration: TextDecoration.underline)),
                           Icon(Icons.arrow_forward_ios, size: 18, color: _kPrimaryColor),
                         ],
                       ),
@@ -293,15 +322,15 @@ class _PropertyCard extends StatelessWidget {
   }
 }
 
-// --- Footer compacto ---
 class _FooterWidget extends StatelessWidget {
-  const _FooterWidget();
+  final bool compact;
+  const _FooterWidget({this.compact = false});
 
   @override
   Widget build(BuildContext context) {
     return Container(
       color: _kPrimaryColor,
-      padding: const EdgeInsets.symmetric(horizontal: kPadding, vertical: 16), // menos alto
+      padding: EdgeInsets.symmetric(horizontal: kPadding, vertical: compact ? 16 : 30),
       child: Column(
         mainAxisSize: MainAxisSize.min,
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -309,7 +338,7 @@ class _FooterWidget extends StatelessWidget {
           Text('Contacta con nosotros',
               style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 18)),
           SizedBox(height: 10),
-          _ContactItem(icon: Icons.phone, text: '+34 241 85 39 23'),
+          _ContactItem(icon: Icons.phone, text: '+34 641 85 39 23'),
           SizedBox(height: 5),
           _ContactItem(icon: Icons.email, text: 'habitalink@gmail.com'),
         ],
@@ -327,9 +356,9 @@ class _ContactItem extends StatelessWidget {
   Widget build(BuildContext context) {
     return Row(
       children: [
-        Icon(icon, color: Colors.white, size: 20),
-        const SizedBox(width: 8),
-        Text(text, style: const TextStyle(color: Colors.white, fontSize: 16)),
+        Icon(icon, color: Colors.white, size: 24),
+        const SizedBox(width: 12),
+        Text(text, style: const TextStyle(color: Colors.white, fontSize: 18)),
       ],
     );
   }
