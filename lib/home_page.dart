@@ -1,32 +1,36 @@
 import 'package:flutter/material.dart';
+import 'dart:math' as math;
 
-// Definición de colores base (para usar en esta pantalla)
+// Definición de colores base
 const Color _kPrimaryColor = Color(0xFF2F544D); // Verde oscuro
-const Color _kAccentColor = Color(0xFFE9C589); // Tono crema/beige (simulado)
+const Color _kAccentColor = Color(0xFFE9C589); // Crema/beige
 const Color _kBackgroundColor = Color(0xFFF7F7F7); // Fondo ligero
+const double kPadding = 24.0;
+const double kMargin = 20.0;
 
 class HomePage extends StatelessWidget {
   const HomePage({super.key});
 
   @override
   Widget build(BuildContext context) {
+    final screenWidth = MediaQuery.of(context).size.width;
+    final cardWidth = math.min(300.0, screenWidth * 0.25); // Tarjetas proporcionales
+    final cardHeight = cardWidth * 1.5;
+
     return Scaffold(
       backgroundColor: _kBackgroundColor,
-      // 1. BARRA SUPERIOR (AppBar)
       appBar: AppBar(
-        // El color ya lo toma del theme en main.dart, pero se puede redefinir
         elevation: 0,
         title: const Text(
-          'HABITALINK', // Logo
+          'HABITALINK',
           style: TextStyle(fontWeight: FontWeight.bold, color: Colors.white),
         ),
         actions: [
-          // Botones "Inicio" y "Sesión"
           TextButton(
             onPressed: () {},
             child: const Text(
               'Inicio',
-              style: TextStyle(color: Colors.white70),
+              style: TextStyle(color: Colors.white70, fontSize: 18),
             ),
           ),
           TextButton(
@@ -34,16 +38,13 @@ class HomePage extends StatelessWidget {
             child: const Text(
               'Sesión',
               style: TextStyle(
-                color: Colors.white,
-                fontWeight: FontWeight.bold,
-              ),
+                  color: Colors.white, fontWeight: FontWeight.bold, fontSize: 18),
             ),
           ),
           const SizedBox(width: 8),
         ],
-        // 1.1 Menú de Navegación debajo del AppBar
         bottom: const PreferredSize(
-          preferredSize: Size.fromHeight(40.0),
+          preferredSize: Size.fromHeight(50.0),
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceAround,
             children: [
@@ -55,96 +56,98 @@ class HomePage extends StatelessWidget {
           ),
         ),
       ),
-
-      // 2. CUERPO DE LA PÁGINA (Body)
       body: SingleChildScrollView(
-        padding: const EdgeInsets.symmetric(vertical: 20.0),
+        padding: const EdgeInsets.symmetric(vertical: 40.0),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // 2.1 Mensaje de Bienvenida
-            const Padding(
-              padding: EdgeInsets.symmetric(horizontal: 20.0),
-              child: Text(
+            // Bienvenida
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: kPadding),
+              child: const Text(
                 'Conecta con tu espacio ideal',
                 style: TextStyle(
-                  fontSize: 24,
-                  fontWeight: FontWeight.w600,
-                  color: _kPrimaryColor,
-                ),
+                    fontSize: 32, fontWeight: FontWeight.w600, color: _kPrimaryColor),
               ),
             ),
-            const SizedBox(height: 20),
+            const SizedBox(height: 30),
 
-            // 2.2 Barra de Búsqueda y Filtros
-            const Padding(
-              padding: EdgeInsets.symmetric(horizontal: 20.0),
-              child: _SearchBarWidget(),
+            // SearchBar
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: kPadding),
+              child: SizedBox(height: 60, child: _SearchBarWidget()),
             ),
             const SizedBox(height: 40),
 
-            // 2.3 Sección de Exploración Títulos
-            const Padding(
-              padding: EdgeInsets.symmetric(horizontal: 20.0),
-              child: Text(
+            // Sección de exploración
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: kPadding),
+              child: const Text(
                 'Explora nuevas posibilidades',
                 style: TextStyle(
-                  fontSize: 20,
-                  fontWeight: FontWeight.bold,
-                  color: _kPrimaryColor,
-                ),
+                    fontSize: 24, fontWeight: FontWeight.bold, color: _kPrimaryColor),
               ),
             ),
-            const Padding(
-              padding: EdgeInsets.symmetric(horizontal: 20.0),
-              child: Text(
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: kPadding),
+              child: const Text(
                 'Inspírate con las mejores opciones de vivienda.',
-                style: TextStyle(fontSize: 14, color: Colors.grey),
+                style: TextStyle(fontSize: 18, color: Colors.grey),
               ),
             ),
             const SizedBox(height: 20),
 
-            // 2.4 Lista Horizontal de Propiedades (Slider)
+            // Lista Horizontal de Propiedades centrada
             SizedBox(
-              height: 350, // Altura necesaria para las tarjetas
-              child: ListView(
-                scrollDirection: Axis.horizontal,
-                padding: const EdgeInsets.symmetric(horizontal: 20.0),
-                children: const [
-                  _PropertyCard(
-                    // Aquí deberías poner tus imágenes
-                    imageUrl: 'assets/engels_volkers/ref_w02zvw0/1.png',
-                    title:
-                        'Casa Palacio en el corazón de Santa Cruz con gran Piscina',
-                    price: '380.000€',
-                  ),
-                  _PropertyCard(
-                    imageUrl: 'assets/engels_volkers/ref_w02uxx4/1.png',
-                    title:
-                        'Casa o chalet Independiente en venta en Santa Cruz - Alfalfa Centro, Sevilla',
-                    price: '3.400.000€',
-                  ),
-                  _PropertyCard(
-                    imageUrl: 'assets/casa3.png',
-                    title: 'Apartamento de lujo con vistas al mar',
-                    price: '1.200.000€',
-                  ),
-                ],
+              height: cardHeight,
+              child: LayoutBuilder(
+                builder: (context, constraints) {
+                  final screenWidth = constraints.maxWidth;
+                  final totalCardsWidth = 2 * cardWidth + kMargin;
+                  final horizontalPadding = (screenWidth - totalCardsWidth) / 2;
+                  final safePadding = horizontalPadding > kPadding ? horizontalPadding : kPadding;
+
+                  return SingleChildScrollView(
+                    scrollDirection: Axis.horizontal,
+                    child: Padding(
+                      padding: EdgeInsets.symmetric(horizontal: safePadding),
+                      child: Row(
+                        children: [
+                          _PropertyCard(
+                            imageUrl: 'assets/engels_volkers/ref_w02zvw0/1.png',
+                            title:
+                                'Casa Palacio en el corazón de Santa Cruz con gran Piscina',
+                            price: '380.000€',
+                            cardWidth: cardWidth,
+                            cardHeight: cardHeight,
+                          ),
+                          const SizedBox(width: kMargin),
+                          _PropertyCard(
+                            imageUrl: 'assets/engels_volkers/ref_w02uxx4/1.png',
+                            title:
+                                'Casa o chalet Independiente en venta en Santa Cruz - Alfalfa Centro, Sevilla',
+                            price: '3.400.000€',
+                            cardWidth: cardWidth,
+                            cardHeight: cardHeight,
+                          ),
+                        ],
+                      ),
+                    ),
+                  );
+                },
               ),
             ),
+            const SizedBox(height: 40),
           ],
         ),
       ),
-
-      // 3. PIE DE PÁGINA (FOOTER)
-      bottomNavigationBar: const _FooterWidget(),
+      bottomNavigationBar: const _FooterWidget(), // footer más compacto
     );
   }
 }
 
-// --- WIDGETS AUXILIARES ---
+// --- Widgets Auxiliares ---
 
-// Widget auxiliar para el menú de navegación
 class _NavMenuItem extends StatelessWidget {
   final String title;
   const _NavMenuItem({required this.title});
@@ -153,61 +156,47 @@ class _NavMenuItem extends StatelessWidget {
   Widget build(BuildContext context) {
     return TextButton(
       onPressed: () {},
-      child: Text(
-        title,
-        style: const TextStyle(
-          color: Colors.white,
-          fontWeight: FontWeight.w500,
-        ),
-      ),
+      child: Text(title,
+          style: const TextStyle(color: Colors.white, fontWeight: FontWeight.w500, fontSize: 18)),
     );
   }
 }
 
-// Widget para la barra de búsqueda y filtros
 class _SearchBarWidget extends StatelessWidget {
   const _SearchBarWidget();
 
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: const EdgeInsets.all(4.0),
-      // El color de fondo claro (crema) para el input
+      padding: const EdgeInsets.symmetric(horizontal: 16.0),
       decoration: BoxDecoration(
         color: _kAccentColor,
-        borderRadius: BorderRadius.circular(8.0),
+        borderRadius: BorderRadius.circular(12.0),
       ),
       child: Row(
         children: [
-          // Botón Filtrar
           TextButton.icon(
             onPressed: () {},
-            icon: const Icon(Icons.keyboard_arrow_down, color: _kPrimaryColor),
-            label: const Text(
-              'Filtrar',
-              style: TextStyle(color: _kPrimaryColor),
-            ),
+            icon: const Icon(Icons.keyboard_arrow_down, color: _kPrimaryColor, size: 26),
+            label: const Text('Filtrar',
+                style: TextStyle(color: _kPrimaryColor, fontSize: 18)),
           ),
-          // Línea divisoria simulada (usualmente no se usa VerticalDivider en Row/Container)
-          Container(width: 1, height: 20, color: Colors.grey[400]),
-          const SizedBox(width: 8),
-
-          // Campo de Búsqueda
+          Container(width: 1, height: 36, color: Colors.grey[400]),
+          const SizedBox(width: 12),
           const Expanded(
             child: TextField(
+              style: TextStyle(fontSize: 18),
               decoration: InputDecoration(
                 hintText: 'Buscar vivienda, municipio...',
                 border: InputBorder.none,
                 isDense: true,
-                contentPadding: EdgeInsets.symmetric(vertical: 8),
+                contentPadding: EdgeInsets.symmetric(vertical: 12),
               ),
             ),
           ),
-
-          // Botón de Lupa
           IconButton(
             onPressed: () {},
-            icon: const Icon(Icons.search, color: _kPrimaryColor),
+            icon: const Icon(Icons.search, color: _kPrimaryColor, size: 28),
           ),
         ],
       ),
@@ -215,74 +204,69 @@ class _SearchBarWidget extends StatelessWidget {
   }
 }
 
-// Widget para la tarjeta de propiedad (Property Card)
 class _PropertyCard extends StatelessWidget {
   final String imageUrl;
   final String title;
   final String price;
+  final double cardWidth;
+  final double cardHeight;
 
   const _PropertyCard({
     required this.imageUrl,
     required this.title,
     required this.price,
+    required this.cardWidth,
+    required this.cardHeight,
   });
 
   @override
   Widget build(BuildContext context) {
     return Container(
-      width: 200,
-      margin: const EdgeInsets.only(right: 15),
+      width: cardWidth,
+      height: cardHeight,
       decoration: BoxDecoration(
         color: Colors.white,
-        borderRadius: BorderRadius.circular(8),
-        boxShadow: const [
-          BoxShadow(color: Colors.black12, blurRadius: 4, offset: Offset(0, 2)),
-        ],
+        borderRadius: BorderRadius.circular(12),
+        boxShadow: const [BoxShadow(color: Colors.black12, blurRadius: 8, offset: Offset(0, 4))],
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // Imagen
+          // Imagen centrada
           ClipRRect(
-            borderRadius: const BorderRadius.vertical(top: Radius.circular(8)),
-            child: Image.asset(
-              imageUrl,
-              height: 150,
+            borderRadius: const BorderRadius.vertical(top: Radius.circular(12)),
+            child: SizedBox(
+              height: cardHeight * 0.5,
               width: double.infinity,
-              fit: BoxFit.cover,
-              // Fallback en caso de que la imagen no exista (solo para demostración)
-              errorBuilder: (context, error, stackTrace) => Container(
-                height: 150,
-                color: Colors.grey[200],
-                alignment: Alignment.center,
-                child: const Icon(Icons.image_not_supported),
+              child: Center(
+                child: Image.asset(
+                  imageUrl,
+                  fit: BoxFit.cover,
+                  width: cardWidth,
+                  errorBuilder: (context, error, stackTrace) => Container(
+                    height: cardHeight * 0.5,
+                    color: Colors.grey[200],
+                    alignment: Alignment.center,
+                    child: const Icon(Icons.image_not_supported, size: 50),
+                  ),
+                ),
               ),
             ),
           ),
-
-          // Contenido de la tarjeta
           Padding(
-            padding: const EdgeInsets.all(12.0),
+            padding: const EdgeInsets.all(16.0),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(
-                  title,
-                  style: const TextStyle(fontSize: 14),
-                  maxLines: 2, // Ajustado para dos líneas
-                  overflow: TextOverflow.ellipsis,
-                ),
-                const SizedBox(height: 8),
-                Text(
-                  price,
-                  style: const TextStyle(
-                    fontSize: 18,
-                    fontWeight: FontWeight.bold,
-                    color: _kPrimaryColor,
-                  ),
-                ),
-                const SizedBox(height: 8),
-                // Botón "más detalles"
+                Text(title,
+                    style: const TextStyle(fontSize: 18),
+                    maxLines: 2,
+                    overflow: TextOverflow.ellipsis),
+                const SizedBox(height: 12),
+                Text(price,
+                    style: const TextStyle(
+                        fontSize: 24, fontWeight: FontWeight.bold, color: _kPrimaryColor)),
+                const SizedBox(height: 12),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.end,
                   children: [
@@ -291,18 +275,10 @@ class _PropertyCard extends StatelessWidget {
                       style: TextButton.styleFrom(padding: EdgeInsets.zero),
                       child: const Row(
                         children: [
-                          Text(
-                            'más detalles',
-                            style: TextStyle(
-                              color: _kPrimaryColor,
-                              decoration: TextDecoration.underline,
-                            ),
-                          ),
-                          Icon(
-                            Icons.arrow_forward_ios,
-                            size: 14,
-                            color: _kPrimaryColor,
-                          ),
+                          Text('más detalles',
+                              style: TextStyle(
+                                  color: _kPrimaryColor, decoration: TextDecoration.underline)),
+                          Icon(Icons.arrow_forward_ios, size: 18, color: _kPrimaryColor),
                         ],
                       ),
                     ),
@@ -317,7 +293,7 @@ class _PropertyCard extends StatelessWidget {
   }
 }
 
-// Widget para el Pie de Página (Footer)
+// --- Footer compacto ---
 class _FooterWidget extends StatelessWidget {
   const _FooterWidget();
 
@@ -325,35 +301,26 @@ class _FooterWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       color: _kPrimaryColor,
-      padding: const EdgeInsets.symmetric(horizontal: 20.0, vertical: 15.0),
+      padding: const EdgeInsets.symmetric(horizontal: kPadding, vertical: 16), // menos alto
       child: Column(
         mainAxisSize: MainAxisSize.min,
         crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          const Text(
-            'Contacta con nosotros',
-            style: TextStyle(
-              color: Colors.white,
-              fontWeight: FontWeight.bold,
-              fontSize: 16,
-            ),
-          ),
-          const SizedBox(height: 10),
-          const _ContactItem(icon: Icons.phone, text: '+34 241 85 39 23'),
-          const SizedBox(height: 5),
-          const _ContactItem(icon: Icons.email, text: 'habitalink@gmail.com'),
-          // Aquí puedes agregar un logo o más texto de pie de página
+        children: const [
+          Text('Contacta con nosotros',
+              style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 18)),
+          SizedBox(height: 10),
+          _ContactItem(icon: Icons.phone, text: '+34 241 85 39 23'),
+          SizedBox(height: 5),
+          _ContactItem(icon: Icons.email, text: 'habitalink@gmail.com'),
         ],
       ),
     );
   }
 }
 
-// Widget auxiliar para los ítems de contacto
 class _ContactItem extends StatelessWidget {
   final IconData icon;
   final String text;
-
   const _ContactItem({required this.icon, required this.text});
 
   @override
@@ -362,7 +329,7 @@ class _ContactItem extends StatelessWidget {
       children: [
         Icon(icon, color: Colors.white, size: 20),
         const SizedBox(width: 8),
-        Text(text, style: const TextStyle(color: Colors.white)),
+        Text(text, style: const TextStyle(color: Colors.white, fontSize: 16)),
       ],
     );
   }
