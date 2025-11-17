@@ -1,53 +1,45 @@
 import 'package:flutter/material.dart';
-
-// --- Colores y Constantes ---
-const Color kPrimaryColor = Color(0xFF2F544D);
-const Color kAccentColor = Color(0xFFE9C589);
-const Color kPageBackgroundColor = Color(0xFFFBF6EF);
-const Color kLoginCardColor = Color(0xFFFEF7E9);
-const Color kTextFieldColor = Color(0xFFFBEBCF);
-const Color kIconColor = Color(0xFFB99A70);
-const Color kHintTextColor = Color(0xFFB99A70);
-const double kPadding = 24.0;
+import '../theme/colors.dart';
 
 // --- Widget Principal de la Página ---
 
-class LoginPage extends StatelessWidget {
-  const LoginPage({super.key});
+class RegisterPage extends StatelessWidget {
+  const RegisterPage({super.key});
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: kPageBackgroundColor,
+      backgroundColor: AppColors.pageBackground,
+      // AppBar idéntica (Logo, Home, Nav)
       appBar: PreferredSize(
         preferredSize: const Size.fromHeight(160),
         child: Column(
           children: [
             Padding(
               padding:
-                  const EdgeInsets.symmetric(horizontal: kPadding, vertical: 8),
+                  const EdgeInsets.symmetric(horizontal: AppColors.kPadding, vertical: 8),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   IconButton(
                     icon: const Icon(Icons.home,
-                        color: kPrimaryColor, size: 30),
+                        color: AppColors.primary, size: 30),
                     onPressed: () {
                       Navigator.pushNamed(context, '/');
                     },
                     tooltip: 'Volver a la página principal',
                   ),
                   Image.asset(
-                    'assets/logo/LogoSinFondo.png',
+                    'assets/logo/LogoSinFondo.png', // Misma ruta del logo
                     height: 100,
                     fit: BoxFit.contain,
                   ),
-                  const SizedBox(width: 48),
+                  const SizedBox(width: 48), // Spacer
                 ],
               ),
             ),
             Container(
-              color: kPrimaryColor,
+              color: AppColors.primary,
               height: 40,
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceAround,
@@ -62,11 +54,12 @@ class LoginPage extends StatelessWidget {
           ],
         ),
       ),
+      // Cuerpo de la página de Registro
       body: Center(
         child: SingleChildScrollView(
-          padding: const EdgeInsets.all(kPadding),
+          padding: const EdgeInsets.all(AppColors.kPadding),
           child:
-              const _LoginForm(), // Widget privado para el formulario de login
+              const _RegisterForm(), // Widget privado para el formulario de registro
         ),
       ),
     );
@@ -75,8 +68,8 @@ class LoginPage extends StatelessWidget {
 
 // --- Widgets del Formulario ---
 
-class _LoginForm extends StatelessWidget {
-  const _LoginForm();
+class _RegisterForm extends StatelessWidget {
+  const _RegisterForm();
 
   @override
   Widget build(BuildContext context) {
@@ -85,7 +78,7 @@ class _LoginForm extends StatelessWidget {
       child: Container(
         padding: const EdgeInsets.all(32.0),
         decoration: BoxDecoration(
-          color: kLoginCardColor,
+          color: AppColors.cardBackground,
           borderRadius: BorderRadius.circular(20.0),
           boxShadow: [
             BoxShadow(
@@ -98,57 +91,68 @@ class _LoginForm extends StatelessWidget {
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
+            // 1. Icono de Usuario (igual)
             Container(
               width: 100,
               height: 100,
               decoration: const BoxDecoration(
-                color: kAccentColor,
+                color: AppColors.accent,
                 shape: BoxShape.circle,
               ),
               child: const Icon(
                 Icons.person_outline,
-                color: kIconColor,
+                color: AppColors.iconColor,
                 size: 60,
               ),
             ),
             const SizedBox(height: 30),
-            const _LoginTextField(
+
+            // 2. Campo Usuario
+            const _RegisterTextField(
+              hintText: 'Nombre de usuario',
+              icon: Icons.person_outline,
+            ),
+            const SizedBox(height: 20),
+
+            // 3. Campo Email
+            const _RegisterTextField(
               hintText: 'Usuario@gmail.com',
               icon: Icons.mail_outline,
             ),
             const SizedBox(height: 20),
-            const _LoginTextField(
-              hintText: '.........',
+
+            // 4. Campo Contraseña
+            const _RegisterTextField(
+              hintText: 'Contraseña',
               icon: Icons.lock_outline,
               isPassword: true,
             ),
-            const SizedBox(height: 15),
-            Align(
-              alignment: Alignment.centerRight,
-              child: TextButton(
-                onPressed: () {},
-                child: const Text(
-                  'Olvidé mi contraseña ↗',
-                  style: TextStyle(color: kIconColor, fontSize: 14),
-                ),
-              ),
-            ),
             const SizedBox(height: 20),
+
+            // 5. Campo Confirmar Contraseña
+            const _RegisterTextField(
+              hintText: 'Confirmar contraseña',
+              icon: Icons.lock_outline,
+              isPassword: true,
+            ),
+            const SizedBox(height: 30),
+
+            // 6. Botón Crear Cuenta
             SizedBox(
               width: double.infinity,
               child: ElevatedButton(
                 onPressed: () {
-                  // TODO: Lógica de inicio de sesión
+                  // TODO: Lógica de registro
                 },
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: kPrimaryColor,
+                  backgroundColor: AppColors.primary, // Verde oscuro
                   padding: const EdgeInsets.symmetric(vertical: 20),
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(30),
                   ),
                 ),
                 child: const Text(
-                  'Iniciar Sesión',
+                  'Crear cuenta',
                   style: TextStyle(
                     color: Colors.white,
                     fontSize: 18,
@@ -159,18 +163,17 @@ class _LoginForm extends StatelessWidget {
             ),
             const SizedBox(height: 20),
 
-            // --- AQUÍ ESTÁ LA MODIFICACIÓN ---
+            // 7. Link a Iniciar sesión
             TextButton(
               onPressed: () {
-                // Navegar a la página de registro
-                Navigator.pushNamed(context, '/registro');
+                // Volver a la página de login
+                Navigator.pushNamed(context, '/login');
               },
               child: const Text(
-                'Crear cuenta ↗',
-                style: TextStyle(color: kIconColor, fontSize: 16),
+                'Iniciar sesión ↗',
+                style: TextStyle(color: AppColors.iconColor, fontSize: 16),
               ),
             ),
-            // ---------------------------------
           ],
         ),
       ),
@@ -180,12 +183,13 @@ class _LoginForm extends StatelessWidget {
 
 // --- Widgets Auxiliares ---
 
-class _LoginTextField extends StatelessWidget {
+/// Un TextField personalizado (copiado de login_page.dart)
+class _RegisterTextField extends StatelessWidget {
   final String hintText;
   final IconData icon;
   final bool isPassword;
 
-  const _LoginTextField({
+  const _RegisterTextField({
     required this.hintText,
     required this.icon,
     this.isPassword = false,
@@ -197,13 +201,13 @@ class _LoginTextField extends StatelessWidget {
       obscureText: isPassword,
       decoration: InputDecoration(
         hintText: hintText,
-        hintStyle: const TextStyle(color: kHintTextColor),
-        prefixIcon: Icon(icon, color: kIconColor),
+        hintStyle: const TextStyle(color: AppColors.hintTextColor),
+        prefixIcon: Icon(icon, color: AppColors.iconColor),
         filled: true,
-        fillColor: kTextFieldColor,
+        fillColor: AppColors.textFieldBackground,
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(30.0),
-          borderSide: BorderSide.none,
+          borderSide: BorderSide.none, // Sin borde
         ),
         contentPadding:
             const EdgeInsets.symmetric(vertical: 20, horizontal: 25),
@@ -212,6 +216,7 @@ class _LoginTextField extends StatelessWidget {
   }
 }
 
+/// Widget para el menú de navegación (copiado de login_page.dart)
 class NavMenuItem extends StatelessWidget {
   final String title;
   const NavMenuItem({super.key, required this.title});

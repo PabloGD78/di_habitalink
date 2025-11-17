@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
-import 'home_page.dart';
-import 'login_page.dart';
-import 'register_page.dart'; // <-- 1. IMPORTAMOS LA PÁGINA DE REGISTRO
-
+import 'pages/home_page.dart';
+import 'pages/login_page.dart';
+import 'pages/register_page.dart'; // <-- 1. IMPORTAMOS LA PÁGINA DE REGISTRO
+import 'theme/colors.dart';
 void main() {
   runApp(const MyApp());
 }
@@ -18,19 +18,19 @@ class MyApp extends StatelessWidget {
       title: 'Habitalink Inmobiliaria',
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
-        primaryColor: kPrimaryColor,
-        appBarTheme: const AppBarTheme(backgroundColor: kPrimaryColor),
+        primaryColor: AppColors.primary,
+        appBarTheme: const AppBarTheme(backgroundColor: AppColors.primary),
         fontFamily: 'Roboto',
       ),
       
-      // --- 2. CONFIGURAMOS LAS RUTAS ---
+      // 2. CONFIGURAMOS LAS RUTAS 
       initialRoute: '/',
       routes: {
         '/': (context) => const HomePage(),
         '/login': (context) => const LoginPage(),
-        '/registro': (context) => const RegisterPage(), // <-- 3. AÑADIMOS LA RUTA
+        '/registro': (context) => const RegisterPage(), //3. AÑADIMOS LA RUTA
       },
-      // -------------------------------
+    
     );
   }
 }
