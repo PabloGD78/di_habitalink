@@ -39,7 +39,11 @@ class HomePage extends StatelessWidget {
                   ),
                   const Spacer(),
                   ElevatedButton(
-                    onPressed: () {},
+                    // --- AQUÍ ESTÁ LA MODIFICACIÓN ---
+                    onPressed: () {
+                      Navigator.pushNamed(context, '/login');
+                    },
+                    // ---------------------------------
                     style: ElevatedButton.styleFrom(
                       backgroundColor: _kAccentColor,
                       shape: RoundedRectangleBorder(

@@ -1,12 +1,13 @@
 import 'package:flutter/material.dart';
-import 'home_page.dart'; // Importamos tu pantalla de diseño
+import 'home_page.dart';
+import 'login_page.dart';
+import 'register_page.dart'; // <-- 1. IMPORTAMOS LA PÁGINA DE REGISTRO
 
 void main() {
   runApp(const MyApp());
 }
 
-// Definición de colores base (para usar en el tema global)
-const Color kPrimaryColor = Color(0xFF2F544D); // Verde oscuro para barras
+const Color kPrimaryColor = Color(0xFF2F544D);
 
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
@@ -18,13 +19,18 @@ class MyApp extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
         primaryColor: kPrimaryColor,
-        // Usar un esquema de color consistente
         appBarTheme: const AppBarTheme(backgroundColor: kPrimaryColor),
-        // Puedes definir la fuente aquí si quieres una específica
         fontFamily: 'Roboto',
       ),
-      // La primera pantalla que se muestra es tu HomePage
-      home: const HomePage(),
+      
+      // --- 2. CONFIGURAMOS LAS RUTAS ---
+      initialRoute: '/',
+      routes: {
+        '/': (context) => const HomePage(),
+        '/login': (context) => const LoginPage(),
+        '/registro': (context) => const RegisterPage(), // <-- 3. AÑADIMOS LA RUTA
+      },
+      // -------------------------------
     );
   }
 }
