@@ -113,13 +113,13 @@ class HomePage extends StatelessWidget {
                 children: const [
                   _PropertyCard(
                     // Aquí deberías poner tus imágenes
-                    imageUrl: 'assets/casa1.png',
+                    imageUrl: 'assets/engels_volkers/ref_w02zvw0/1.png',
                     title:
                         'Casa Palacio en el corazón de Santa Cruz con gran Piscina',
                     price: '380.000€',
                   ),
                   _PropertyCard(
-                    imageUrl: 'assets/casa2.png',
+                    imageUrl: 'assets/engels_volkers/ref_w02uxx4/1.png',
                     title:
                         'Casa o chalet Independiente en venta en Santa Cruz - Alfalfa Centro, Sevilla',
                     price: '3.400.000€',
