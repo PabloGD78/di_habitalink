@@ -14,7 +14,9 @@ class HomePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final screenWidth = MediaQuery.of(context).size.width;
-    final cardWidth = math.min(300.0, screenWidth * 0.25); // Tarjetas proporcionales
+
+    // Mantener ancho original de tarjetas
+    final cardWidth = math.min(300.0, screenWidth * 0.25);
     final cardHeight = cardWidth * 1.5;
 
     return Scaffold(
@@ -23,27 +25,23 @@ class HomePage extends StatelessWidget {
         preferredSize: const Size.fromHeight(160),
         child: Column(
           children: [
-            // Fila superior: logo centrado y botón de iniciar sesión a la derecha
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: kPadding, vertical: 8),
               child: Row(
                 children: [
                   const Spacer(),
-                  // Logo centrado
                   Center(
                     child: Image.asset(
-                      'assets/logo/LogoSinFondo.png', // <-- PON AQUÍ TU IMAGEN
+                      'assets/logo/LogoSinFondo.png',
                       height: 100,
                       fit: BoxFit.contain,
                     ),
                   ),
                   const Spacer(),
                   ElevatedButton(
-                    // --- AQUÍ ESTÁ LA MODIFICACIÓN ---
                     onPressed: () {
                       Navigator.pushNamed(context, '/login');
                     },
-                    // ---------------------------------
                     style: ElevatedButton.styleFrom(
                       backgroundColor: _kAccentColor,
                       shape: RoundedRectangleBorder(
@@ -63,7 +61,6 @@ class HomePage extends StatelessWidget {
                 ],
               ),
             ),
-            // Menú fino
             Container(
               color: _kPrimaryColor,
               height: 40,
@@ -85,24 +82,31 @@ class HomePage extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // Bienvenida
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: kPadding),
-              child: const Text(
-                'Conecta con tu espacio ideal',
-                style: TextStyle(fontSize: 32, fontWeight: FontWeight.w600, color: _kPrimaryColor),
+            // Texto centrado
+            Center(
+              child: Padding(
+                padding: const EdgeInsets.symmetric(horizontal: kPadding),
+                child: const Text(
+                  'Conecta con tu espacio ideal',
+                  textAlign: TextAlign.center,
+                  style: TextStyle(
+                    fontSize: 32,
+                    fontWeight: FontWeight.w600,
+                    color: _kPrimaryColor,
+                  ),
+                ),
               ),
             ),
             const SizedBox(height: 30),
 
-            // SearchBar con dropdown
+            // SearchBar alineada a la izquierda
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: kPadding),
               child: SizedBox(height: 60, child: _SearchBarWidget()),
             ),
             const SizedBox(height: 40),
 
-            // Sección de exploración
+            // Sección de exploración alineada a la izquierda
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: kPadding),
               child: const Text(
@@ -167,7 +171,6 @@ class HomePage extends StatelessWidget {
 }
 
 // --- Widgets Auxiliares ---
-
 class _NavMenuItem extends StatelessWidget {
   final String title;
   const _NavMenuItem({required this.title});
@@ -181,7 +184,6 @@ class _NavMenuItem extends StatelessWidget {
   }
 }
 
-// SearchBar con dropdown de filtros
 class _SearchBarWidget extends StatefulWidget {
   const _SearchBarWidget();
 
