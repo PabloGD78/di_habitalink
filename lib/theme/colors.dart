@@ -2,16 +2,24 @@ import 'package:flutter/material.dart';
 
 class AppColors {
   // Colores base
-  static const Color primary = Color(0xFF2F544D);       // Verde oscuro
-  static const Color accent = Color(0xFFE9C589);        // Crema / beige
-  static const Color background = Color(0xFFF7F7F7);    // Fondo ligero
+  static const Color primary = Color(0xFF2F544D); // Verde oscuro
+  static const Color accent = Color(0xFFE9C589); // Crema / beige
+  static const Color background = Color(0xFFF7F7F7); // Fondo ligero
 
   // Colores específicos de la UI
-  static const Color pageBackground = Color(0xFFFBF6EF);
-  static const Color cardBackground = Color(0xFFFEF7E9);
-  static const Color textFieldBackground = Color(0xFFFBEBCF);
-  static const Color iconColor = Color(0xFFB99A70);
-  static const Color hintTextColor = Color(0xFFB99A70);
+  static const Color pageBackground = Color(
+    0xFFFBF6EF,
+  ); // Fondo de página (Nuevo)
+  static const Color cardBackground = Color(
+    0xFFFEF7E9,
+  ); // Fondo de tarjeta (Nuevo)
+  static const Color textFieldBackground = Color(
+    0xFFFBEBCF,
+  ); // Fondo de campo de texto (Nuevo)
+  static const Color iconColor = Color(0xFFB99A70); // Color de ícono (Nuevo)
+  static const Color hintTextColor = Color(
+    0xFFB99A70,
+  ); // Color de texto de sugerencia (Nuevo)
 
   // Espaciados
   static const double kPadding = 24.0;

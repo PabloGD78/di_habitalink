@@ -26,7 +26,9 @@ class PropertyCard extends StatelessWidget {
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(12),
-        boxShadow: const [BoxShadow(color: Colors.black12, blurRadius: 8, offset: Offset(0, 4))],
+        boxShadow: const [
+          BoxShadow(color: Colors.black12, blurRadius: 8, offset: Offset(0, 4)),
+        ],
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -56,9 +58,21 @@ class PropertyCard extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(title, style: const TextStyle(fontSize: 18), maxLines: 2, overflow: TextOverflow.ellipsis),
+                Text(
+                  title,
+                  style: const TextStyle(fontSize: 18),
+                  maxLines: 2,
+                  overflow: TextOverflow.ellipsis,
+                ),
                 const SizedBox(height: 12),
-                Text(price, style: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold, color: AppColors.primary)),
+                Text(
+                  price,
+                  style: const TextStyle(
+                    fontSize: 24,
+                    fontWeight: FontWeight.bold,
+                    color: AppColors.primary,
+                  ),
+                ),
                 const SizedBox(height: 12),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.end,
@@ -68,8 +82,18 @@ class PropertyCard extends StatelessWidget {
                       style: TextButton.styleFrom(padding: EdgeInsets.zero),
                       child: const Row(
                         children: [
-                          Text('más detalles', style: TextStyle(color: AppColors.primary, decoration: TextDecoration.underline)),
-                          Icon(Icons.arrow_forward_ios, size: 18, color: AppColors.primary),
+                          Text(
+                            'más detalles',
+                            style: TextStyle(
+                              color: AppColors.primary,
+                              decoration: TextDecoration.underline,
+                            ),
+                          ),
+                          Icon(
+                            Icons.arrow_forward_ios,
+                            size: 18,
+                            color: AppColors.primary,
+                          ),
                         ],
                       ),
                     ),

@@ -11,6 +11,11 @@ dependencies:
     sdk: flutter
   cupertino_icons: ^1.0.8
 
+  # Dependencias para el mapa interactivo
+  flutter_map: ^6.1.0
+  latlong2: ^0.9.1
+  
+
 dev_dependencies:
   flutter_test:
     sdk: flutter
