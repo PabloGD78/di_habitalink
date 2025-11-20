@@ -1,5 +1,13 @@
 import 'package:flutter/material.dart';
-import '../theme/colors.dart';
+import 'package:http/http.dart' as http; // Importación necesaria
+import 'dart:convert'; // Importación necesaria
+
+// Asumo que tienes un archivo de colores y el servicio
+import '../theme/colors.dart'; 
+import '../services/auth_service.dart'; // <--- Nuevo import
+
+// Inicializa el servicio
+final AuthService _authService = AuthService();
 
 // --- Widget Principal de la Página ---
 
@@ -8,6 +16,7 @@ class LoginPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    // ... (Tu AppBar original se mantiene)
     return Scaffold(
       backgroundColor: AppColors.pageBackground,
       appBar: PreferredSize(
@@ -64,10 +73,54 @@ class LoginPage extends StatelessWidget {
   }
 }
 
-// --- Widgets del Formulario ---
+// ------------------------------------------------------------------
+// --- WIDGETS DEL FORMULARIO DE LOGIN (MODIFICADOS) ---
+// ------------------------------------------------------------------
 
-class _LoginForm extends StatelessWidget {
+class _LoginForm extends StatefulWidget {
   const _LoginForm();
+
+  @override
+  State<_LoginForm> createState() => _LoginFormState();
+}
+
+class _LoginFormState extends State<_LoginForm> {
+  final TextEditingController _emailController = TextEditingController();
+  final TextEditingController _passwordController = TextEditingController();
+
+  // Función para mostrar alertas de resultado
+  void _showMessageDialog(String title, String message, bool isSuccess) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(message),
+        backgroundColor: isSuccess ? Colors.green : Colors.red,
+        duration: const Duration(seconds: 3),
+      ),
+    );
+  }
+
+  Future<void> _handleLogin() async {
+    final result = await _authService.login(
+      correo: _emailController.text.trim(),
+      password: _passwordController.text,
+    );
+
+    if (result['success'] == true) {
+      _showMessageDialog('Éxito', result['message'], true);
+      // Navegar a la página principal o de usuario
+      // Ejemplo: Navigator.pushReplacementNamed(context, '/home');
+      print('Usuario Logeado: ${result['user']['nombre']}, Token: ${result['token']}');
+    } else {
+      _showMessageDialog('Error', result['message'], false);
+    }
+  }
+
+  @override
+  void dispose() {
+    _emailController.dispose();
+    _passwordController.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -89,6 +142,7 @@ class _LoginForm extends StatelessWidget {
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
+            // ... (Icono original)
             Container(
               width: 100,
               height: 100,
@@ -103,12 +157,16 @@ class _LoginForm extends StatelessWidget {
               ),
             ),
             const SizedBox(height: 30),
-            const _LoginTextField(
+            // Campo de Email/Usuario
+            _LoginTextField(
+              controller: _emailController, // Uso del Controller
               hintText: 'Usuario@gmail.com',
               icon: Icons.mail_outline,
             ),
             const SizedBox(height: 20),
-            const _LoginTextField(
+            // Campo de Contraseña
+            _LoginTextField(
+              controller: _passwordController, // Uso del Controller
               hintText: '.........',
               icon: Icons.lock_outline,
               isPassword: true,
@@ -125,12 +183,11 @@ class _LoginForm extends StatelessWidget {
               ),
             ),
             const SizedBox(height: 20),
+            // Botón de Login
             SizedBox(
               width: double.infinity,
               child: ElevatedButton(
-                onPressed: () {
-                  // TODO: Lógica de inicio de sesión
-                },
+                onPressed: _handleLogin, // Llamada a la función de login
                 style: ElevatedButton.styleFrom(
                   backgroundColor: AppColors.primary,
                   padding: const EdgeInsets.symmetric(vertical: 20),
@@ -150,10 +207,9 @@ class _LoginForm extends StatelessWidget {
             ),
             const SizedBox(height: 20),
 
-            // --- AQUÍ ESTÁ LA MODIFICACIÓN ---
+            // Link a Registro
             TextButton(
               onPressed: () {
-                // Navegar a la página de registro
                 Navigator.pushNamed(context, '/registro');
               },
               child: const Text(
@@ -161,7 +217,6 @@ class _LoginForm extends StatelessWidget {
                 style: TextStyle(color: AppColors.iconColor, fontSize: 16),
               ),
             ),
-            // ---------------------------------
           ],
         ),
       ),
@@ -169,23 +224,29 @@ class _LoginForm extends StatelessWidget {
   }
 }
 
-// --- Widgets Auxiliares ---
+// ------------------------------------------------------------------
+// --- WIDGETS AUXILIARES (MODIFICADOS) ---
+// ------------------------------------------------------------------
 
 class _LoginTextField extends StatelessWidget {
   final String hintText;
   final IconData icon;
   final bool isPassword;
+  final TextEditingController controller; // Aceptar Controller
 
   const _LoginTextField({
     required this.hintText,
     required this.icon,
+    required this.controller, // Recibir Controller
     this.isPassword = false,
   });
 
   @override
   Widget build(BuildContext context) {
     return TextField(
+      controller: controller, // Asignar Controller
       obscureText: isPassword,
+      // ... (Resto de la decoración)
       decoration: InputDecoration(
         hintText: hintText,
         hintStyle: const TextStyle(color: AppColors.hintTextColor),

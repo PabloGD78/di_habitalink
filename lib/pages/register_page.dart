@@ -1,5 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:http/http.dart' as http; // Importación necesaria
+import 'dart:convert'; // Importación necesaria
+
 import '../theme/colors.dart';
+import '../services/auth_service.dart';
+
+final AuthService _authService = AuthService(); // Inicializa el servicio
 
 // --- Widget Principal de la Página ---
 
@@ -8,9 +14,9 @@ class RegisterPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    // ... (Tu AppBar original se mantiene)
     return Scaffold(
       backgroundColor: AppColors.pageBackground,
-      // AppBar idéntica (Logo, Home, Nav)
       appBar: PreferredSize(
         preferredSize: const Size.fromHeight(160),
         child: Column(
@@ -30,11 +36,11 @@ class RegisterPage extends StatelessWidget {
                     tooltip: 'Volver a la página principal',
                   ),
                   Image.asset(
-                    'assets/logo/LogoSinFondo.png', // Misma ruta del logo
+                    'assets/logo/LogoSinFondo.png',
                     height: 100,
                     fit: BoxFit.contain,
                   ),
-                  const SizedBox(width: 48), // Spacer
+                  const SizedBox(width: 48),
                 ],
               ),
             ),
@@ -66,10 +72,70 @@ class RegisterPage extends StatelessWidget {
   }
 }
 
-// --- Widgets del Formulario ---
+// ------------------------------------------------------------------
+// --- WIDGETS DEL FORMULARIO DE REGISTRO (MODIFICADOS) ---
+// ------------------------------------------------------------------
 
-class _RegisterForm extends StatelessWidget {
+class _RegisterForm extends StatefulWidget {
   const _RegisterForm();
+
+  @override
+  State<_RegisterForm> createState() => _RegisterFormState();
+}
+
+class _RegisterFormState extends State<_RegisterForm> {
+  // Controladores para todos los campos requeridos por el backend
+  final TextEditingController _nombreController = TextEditingController();
+  final TextEditingController _apellidosController = TextEditingController();
+  final TextEditingController _tlfController = TextEditingController();
+  final TextEditingController _emailController = TextEditingController();
+  final TextEditingController _passwordController = TextEditingController();
+  final TextEditingController _confirmPasswordController = TextEditingController();
+
+  // Función para mostrar alertas de resultado
+  void _showMessageDialog(String title, String message, bool isSuccess) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(message),
+        backgroundColor: isSuccess ? Colors.green : Colors.red,
+        duration: const Duration(seconds: 3),
+      ),
+    );
+  }
+
+  Future<void> _handleRegister() async {
+    if (_passwordController.text != _confirmPasswordController.text) {
+      _showMessageDialog('Error', 'Las contraseñas no coinciden.', false);
+      return;
+    }
+
+    final result = await _authService.register(
+      nombre: _nombreController.text.trim(),
+      apellidos: _apellidosController.text.trim(),
+      tlf: _tlfController.text.trim(),
+      correo: _emailController.text.trim(),
+      password: _passwordController.text,
+    );
+
+    if (result['success'] == true) {
+      _showMessageDialog('Éxito', result['message'], true);
+      // Navegar a la página de login
+      Navigator.pushReplacementNamed(context, '/login');
+    } else {
+      _showMessageDialog('Error', result['message'], false);
+    }
+  }
+
+  @override
+  void dispose() {
+    _nombreController.dispose();
+    _apellidosController.dispose();
+    _tlfController.dispose();
+    _emailController.dispose();
+    _passwordController.dispose();
+    _confirmPasswordController.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -91,7 +157,7 @@ class _RegisterForm extends StatelessWidget {
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            // 1. Icono de Usuario (igual)
+            // 1. Icono de Usuario
             Container(
               width: 100,
               height: 100,
@@ -107,43 +173,62 @@ class _RegisterForm extends StatelessWidget {
             ),
             const SizedBox(height: 30),
 
-            // 2. Campo Usuario
-            const _RegisterTextField(
-              hintText: 'Nombre de usuario',
+            // 2. Campo Nombre
+            _RegisterTextField(
+              controller: _nombreController, // Pasar controlador
+              hintText: 'Nombre',
               icon: Icons.person_outline,
             ),
             const SizedBox(height: 20),
 
-            // 3. Campo Email
-            const _RegisterTextField(
+            // 3. Campo Apellidos (Añadido)
+            _RegisterTextField(
+              controller: _apellidosController, // Pasar controlador
+              hintText: 'Apellidos',
+              icon: Icons.person_outline,
+            ),
+            const SizedBox(height: 20),
+            
+            // 4. Campo Teléfono (Añadido)
+            _RegisterTextField(
+              controller: _tlfController, // Pasar controlador
+              hintText: 'Teléfono',
+              icon: Icons.phone_android_outlined,
+              keyboardType: TextInputType.phone,
+            ),
+            const SizedBox(height: 20),
+
+            // 5. Campo Email
+            _RegisterTextField(
+              controller: _emailController, // Pasar controlador
               hintText: 'Usuario@gmail.com',
               icon: Icons.mail_outline,
             ),
             const SizedBox(height: 20),
 
-            // 4. Campo Contraseña
-            const _RegisterTextField(
+            // 6. Campo Contraseña
+            _RegisterTextField(
+              controller: _passwordController, // Pasar controlador
               hintText: 'Contraseña',
               icon: Icons.lock_outline,
               isPassword: true,
             ),
             const SizedBox(height: 20),
 
-            // 5. Campo Confirmar Contraseña
-            const _RegisterTextField(
+            // 7. Campo Confirmar Contraseña
+            _RegisterTextField(
+              controller: _confirmPasswordController, // Pasar controlador
               hintText: 'Confirmar contraseña',
               icon: Icons.lock_outline,
               isPassword: true,
             ),
             const SizedBox(height: 30),
 
-            // 6. Botón Crear Cuenta
+            // 8. Botón Crear Cuenta
             SizedBox(
               width: double.infinity,
               child: ElevatedButton(
-                onPressed: () {
-                  // TODO: Lógica de registro
-                },
+                onPressed: _handleRegister, // Llama a la función de registro
                 style: ElevatedButton.styleFrom(
                   backgroundColor: AppColors.primary, // Verde oscuro
                   padding: const EdgeInsets.symmetric(vertical: 20),
@@ -163,10 +248,9 @@ class _RegisterForm extends StatelessWidget {
             ),
             const SizedBox(height: 20),
 
-            // 7. Link a Iniciar sesión
+            // 9. Link a Iniciar sesión
             TextButton(
               onPressed: () {
-                // Volver a la página de login
                 Navigator.pushNamed(context, '/login');
               },
               child: const Text(
@@ -181,24 +265,32 @@ class _RegisterForm extends StatelessWidget {
   }
 }
 
-// --- Widgets Auxiliares ---
+// ------------------------------------------------------------------
+// --- WIDGETS AUXILIARES (MODIFICADOS) ---
+// ------------------------------------------------------------------
 
-/// Un TextField personalizado (copiado de login_page.dart)
+/// Un TextField personalizado
 class _RegisterTextField extends StatelessWidget {
   final String hintText;
   final IconData icon;
   final bool isPassword;
+  final TextEditingController controller; // Aceptar Controller
+  final TextInputType keyboardType;
 
   const _RegisterTextField({
     required this.hintText,
     required this.icon,
+    required this.controller, // Recibir Controller
     this.isPassword = false,
+    this.keyboardType = TextInputType.text,
   });
 
   @override
   Widget build(BuildContext context) {
     return TextField(
+      controller: controller, // Asignar Controller
       obscureText: isPassword,
+      keyboardType: keyboardType,
       decoration: InputDecoration(
         hintText: hintText,
         hintStyle: const TextStyle(color: AppColors.hintTextColor),
@@ -216,7 +308,7 @@ class _RegisterTextField extends StatelessWidget {
   }
 }
 
-/// Widget para el menú de navegación (copiado de login_page.dart)
+/// Widget para el menú de navegación
 class NavMenuItem extends StatelessWidget {
   final String title;
   const NavMenuItem({super.key, required this.title});
