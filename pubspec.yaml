@@ -33,7 +33,4 @@ flutter:
     - assets/logo/LogoSinFondo.png
 
 
-  flutter:
-    sdk: flutter
-  sqflite: ^2.5.0+1 # Para trabajar con bases de datos SQLite
-  path: ^1.8.4      # Para manejar rutas de archivos
+  
