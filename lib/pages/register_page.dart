@@ -114,7 +114,7 @@ class _RegisterFormState extends State<_RegisterForm> {
       apellidos: _apellidosController.text.trim(),
       tlf: _tlfController.text.trim(),
       correo: _emailController.text.trim(),
-      password: _passwordController.text,
+      contrasenia: _passwordController.text,
     );
 
     if (result['success'] == true) {

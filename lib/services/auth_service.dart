@@ -12,7 +12,7 @@ class AuthService {
   Future<Map<String, dynamic>> register({
     required String nombre,
     required String correo,
-    required String password,
+    required String contrasenia,
     required String apellidos, // Necesario para el backend de Node
     required String tlf, // Necesario para el backend de Node
   }) async {
@@ -27,7 +27,7 @@ class AuthService {
           'apellidos': apellidos,
           'tlf': tlf,
           'correo': correo,
-          'password': password,
+          'password': contrasenia,
         }),
       );
 
@@ -50,7 +50,7 @@ class AuthService {
   // ----------------------------------------------------
   Future<Map<String, dynamic>> login({
     required String correo,
-    required String password,
+    required String contrasenia,
   }) async {
     try {
       final response = await http.post(
@@ -60,7 +60,7 @@ class AuthService {
         },
         body: jsonEncode(<String, String>{
           'correo': correo,
-          'password': password,
+          'password': contrasenia,
         }),
       );
 

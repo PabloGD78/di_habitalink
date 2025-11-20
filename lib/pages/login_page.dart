@@ -102,7 +102,7 @@ class _LoginFormState extends State<_LoginForm> {
   Future<void> _handleLogin() async {
     final result = await _authService.login(
       correo: _emailController.text.trim(),
-      password: _passwordController.text,
+      contrasenia: _passwordController.text,
     );
 
     if (result['success'] == true) {

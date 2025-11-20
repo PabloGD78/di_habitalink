@@ -1,4 +1,4 @@
-// Pie de página con información de contacto.
+
 import 'package:flutter/material.dart';
 import '../theme/colors.dart';
 import 'contact_item.dart';

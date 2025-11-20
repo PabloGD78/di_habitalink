@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:latlong2/latlong.dart';
-import '../theme/colors.dart'; // Ajusta según tu proyecto
+
 
 class FilterSidebar extends StatefulWidget {
   const FilterSidebar({super.key});
