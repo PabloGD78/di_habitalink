@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:http/http.dart' as http; // Importación necesaria
-import 'dart:convert'; // Importación necesaria
+
 
 // Asumo que tienes un archivo de colores y el servicio
 import '../theme/colors.dart'; 
@@ -73,10 +72,6 @@ class LoginPage extends StatelessWidget {
   }
 }
 
-// ------------------------------------------------------------------
-// --- WIDGETS DEL FORMULARIO DE LOGIN (MODIFICADOS) ---
-// ------------------------------------------------------------------
-
 class _LoginForm extends StatefulWidget {
   const _LoginForm();
 
@@ -107,8 +102,7 @@ class _LoginFormState extends State<_LoginForm> {
 
     if (result['success'] == true) {
       _showMessageDialog('Éxito', result['message'], true);
-      // Navegar a la página principal o de usuario
-      // Ejemplo: Navigator.pushReplacementNamed(context, '/home');
+
       print('Usuario Logeado: ${result['user']['nombre']}, Token: ${result['token']}');
     } else {
       _showMessageDialog('Error', result['message'], false);
@@ -142,7 +136,6 @@ class _LoginFormState extends State<_LoginForm> {
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            // ... (Icono original)
             Container(
               width: 100,
               height: 100,
@@ -223,10 +216,6 @@ class _LoginFormState extends State<_LoginForm> {
     );
   }
 }
-
-// ------------------------------------------------------------------
-// --- WIDGETS AUXILIARES (MODIFICADOS) ---
-// ------------------------------------------------------------------
 
 class _LoginTextField extends StatelessWidget {
   final String hintText;

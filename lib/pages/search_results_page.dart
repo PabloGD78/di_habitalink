@@ -7,7 +7,6 @@ import 'dart:math' as math;
 import '../theme/colors.dart';
 import '../widgets/filter_sidebar.dart';
 import '../widgets/result_property_card.dart';
-import '../widgets/footer_widget.dart';
 import '../widgets/search_bar_widget.dart';
 
 const double _kMaxWidth = 1200.0;

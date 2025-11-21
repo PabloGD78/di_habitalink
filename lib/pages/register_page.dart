@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:http/http.dart' as http; // Importación necesaria
-import 'dart:convert'; // Importación necesaria
+
 
 import '../theme/colors.dart';
 import '../services/auth_service.dart';
