@@ -1,21 +1,15 @@
 import 'package:flutter/material.dart';
-
-
-// Asumo que tienes un archivo de colores y el servicio
+import 'package:shared_preferences/shared_preferences.dart';
 import '../theme/colors.dart'; 
-import '../services/auth_service.dart'; // <--- Nuevo import
+import '../services/auth_service.dart';
 
-// Inicializa el servicio
 final AuthService _authService = AuthService();
-
-// --- Widget Principal de la Página ---
 
 class LoginPage extends StatelessWidget {
   const LoginPage({super.key});
 
   @override
   Widget build(BuildContext context) {
-    // ... (Tu AppBar original se mantiene)
     return Scaffold(
       backgroundColor: AppColors.pageBackground,
       appBar: PreferredSize(
@@ -64,8 +58,7 @@ class LoginPage extends StatelessWidget {
       body: Center(
         child: SingleChildScrollView(
           padding: const EdgeInsets.all(AppColors.kPadding),
-          child:
-              const _LoginForm(), // Widget privado para el formulario de login
+          child: const _LoginForm(),
         ),
       ),
     );
@@ -83,8 +76,7 @@ class _LoginFormState extends State<_LoginForm> {
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
 
-  // Función para mostrar alertas de resultado
-  void _showMessageDialog(String title, String message, bool isSuccess) {
+  void _showMessageDialog(String message, bool isSuccess) {
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
         content: Text(message),
@@ -101,11 +93,16 @@ class _LoginFormState extends State<_LoginForm> {
     );
 
     if (result['success'] == true) {
-      _showMessageDialog('Éxito', result['message'], true);
+      // Guardar datos del usuario en SharedPreferences
+      final prefs = await SharedPreferences.getInstance();
+      await prefs.setString('userName', result['user']['nombre']); // Guardamos nombre
 
-      print('Usuario Logeado: ${result['user']['nombre']}, Token: ${result['token']}');
+      _showMessageDialog(result['message'], true);
+
+      // Navegar a HomePage y reemplazar la ruta para que no vuelva al login
+      Navigator.pushNamedAndRemoveUntil(context, '/', (route) => false);
     } else {
-      _showMessageDialog('Error', result['message'], false);
+      _showMessageDialog(result['message'], false);
     }
   }
 
@@ -150,16 +147,14 @@ class _LoginFormState extends State<_LoginForm> {
               ),
             ),
             const SizedBox(height: 30),
-            // Campo de Email/Usuario
             _LoginTextField(
-              controller: _emailController, // Uso del Controller
+              controller: _emailController, 
               hintText: 'Usuario@gmail.com',
               icon: Icons.mail_outline,
             ),
             const SizedBox(height: 20),
-            // Campo de Contraseña
             _LoginTextField(
-              controller: _passwordController, // Uso del Controller
+              controller: _passwordController, 
               hintText: '.........',
               icon: Icons.lock_outline,
               isPassword: true,
@@ -176,11 +171,10 @@ class _LoginFormState extends State<_LoginForm> {
               ),
             ),
             const SizedBox(height: 20),
-            // Botón de Login
             SizedBox(
               width: double.infinity,
               child: ElevatedButton(
-                onPressed: _handleLogin, // Llamada a la función de login
+                onPressed: _handleLogin,
                 style: ElevatedButton.styleFrom(
                   backgroundColor: AppColors.primary,
                   padding: const EdgeInsets.symmetric(vertical: 20),
@@ -199,8 +193,6 @@ class _LoginFormState extends State<_LoginForm> {
               ),
             ),
             const SizedBox(height: 20),
-
-            // Link a Registro
             TextButton(
               onPressed: () {
                 Navigator.pushNamed(context, '/registro');
@@ -221,21 +213,20 @@ class _LoginTextField extends StatelessWidget {
   final String hintText;
   final IconData icon;
   final bool isPassword;
-  final TextEditingController controller; // Aceptar Controller
+  final TextEditingController controller; 
 
   const _LoginTextField({
     required this.hintText,
     required this.icon,
-    required this.controller, // Recibir Controller
+    required this.controller, 
     this.isPassword = false,
   });
 
   @override
   Widget build(BuildContext context) {
     return TextField(
-      controller: controller, // Asignar Controller
+      controller: controller,
       obscureText: isPassword,
-      // ... (Resto de la decoración)
       decoration: InputDecoration(
         hintText: hintText,
         hintStyle: const TextStyle(color: AppColors.hintTextColor),
@@ -256,7 +247,6 @@ class _LoginTextField extends StatelessWidget {
 class NavMenuItem extends StatelessWidget {
   final String title;
   const NavMenuItem({super.key, required this.title});
-
   @override
   Widget build(BuildContext context) {
     return TextButton(

@@ -14,6 +14,10 @@ dependencies:
   # Dependencias para el mapa interactivo
   flutter_map: ^6.1.0
   latlong2: ^0.9.1
+  file_picker: ^8.0.0
+  shared_preferences: ^2.1.1
+
+
   
 
 dev_dependencies:
@@ -31,6 +35,8 @@ flutter:
     - assets/engels_volkers/ref_w02uxx4/
     - assets/engels_volkers/ref_w02zvw0/
     - assets/logo/LogoSinFondo.png
+    - assets/zitizen/ref_104833817/
+    - assets/italyca/ref_01360/
 
 
   

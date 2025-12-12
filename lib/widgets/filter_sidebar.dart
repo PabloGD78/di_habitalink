@@ -1,18 +1,52 @@
+// filter_sidebar.dart
+
 import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:latlong2/latlong.dart';
-
+import '../theme/colors.dart';
+import '../widgets/property_model.dart';
 
 class FilterSidebar extends StatefulWidget {
-  const FilterSidebar({super.key});
+  final Function(FilterData) onFilterChanged;
+
+  const FilterSidebar({super.key, required this.onFilterChanged});
 
   @override
   State<FilterSidebar> createState() => _FilterSidebarState();
 }
 
 class _FilterSidebarState extends State<FilterSidebar> {
-  // Inicial Sevilla
-  LatLng markerPosition = LatLng(37.3886, -5.9823);
+  LatLng markerPosition = const LatLng(37.3886, -5.9823);
+
+  RangeValues priceRange = const RangeValues(0, 4000000);
+  String? selectedType;
+  String? selectedBedrooms;
+  String? selectedBathrooms;
+  String? selectedFeature;
+
+  void _applyFilters() {
+    final filterData = FilterData(
+      minPrice: priceRange.start.toInt(),
+      maxPrice: priceRange.end.toInt(),
+      type: selectedType,
+      bedrooms: selectedBedrooms,
+      bathrooms: selectedBathrooms,
+      feature: selectedFeature,
+    );
+    widget.onFilterChanged(filterData);
+  }
+
+  void _clearFilters() {
+    setState(() {
+      priceRange = const RangeValues(0, 4000000);
+      selectedType = null;
+      selectedBedrooms = null;
+      selectedBathrooms = null;
+      selectedFeature = null;
+      markerPosition = const LatLng(37.3886, -5.9823);
+    });
+    _applyFilters();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -20,63 +54,113 @@ class _FilterSidebarState extends State<FilterSidebar> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          // Mapa interactivo
-          SizedBox(
-            height: 200,
-            child: FlutterMap(
-              options: MapOptions(
-                center: markerPosition,
-                zoom: 13,
-                // Cuando el usuario toque el mapa, actualizamos el marcador
-                onTap: (tapPosition, latlng) {
-                  setState(() {
-                    markerPosition = latlng;
-                  });
-                },
-              ),
-              children: [
-                TileLayer(
-                  urlTemplate:
-                      "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
-                  subdomains: const ['a', 'b', 'c'],
+          // Mapa
+          Padding(
+            padding: const EdgeInsets.only(bottom: 20.0),
+            child: SizedBox(
+              height: 200,
+              child: FlutterMap(
+                options: MapOptions(
+                  center: markerPosition,
+                  zoom: 13,
+                  onTap: (tapPosition, latlng) {
+                    setState(() {
+                      markerPosition = latlng;
+                    });
+                  },
                 ),
-                MarkerLayer(
-                  markers: [
-                    Marker(
-                      point: markerPosition,
-                      width: 40,
-                      height: 40,
-                      child: const Icon(
-                        Icons.location_on,
-                        color: Colors.red,
-                        size: 40,
+                children: [
+                  TileLayer(
+                    urlTemplate: "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
+                    subdomains: const ['a', 'b', 'c'],
+                  ),
+                  MarkerLayer(
+                    markers: [
+                      Marker(
+                        point: markerPosition,
+                        width: 40,
+                        height: 40,
+                        child: const Icon(Icons.location_on, color: Colors.red, size: 40),
                       ),
-                    ),
-                  ],
-                ),
-              ],
+                    ],
+                  ),
+                ],
+              ),
             ),
           ),
-          const SizedBox(height: 20),
 
-          // Filtros funcionales
-          FilterDropdown(
-            title: 'Rango de Precio',
-            options: ['0-100k', '100k-300k', '300k+'],
+          const Text('Rango de Precio', style: TextStyle(fontWeight: FontWeight.bold)),
+          RangeSlider(
+            values: priceRange,
+            min: 0,
+            max: 4000000,
+            divisions: 40,
+            activeColor: AppColors.primary,
+            labels: RangeLabels('€${(priceRange.start ~/ 1000)}k', '€${(priceRange.end ~/ 1000)}k'),
+            onChanged: (values) {
+              setState(() => priceRange = values);
+              _applyFilters();
+            },
           ),
-          const SizedBox(height: 10),
+
           FilterDropdown(
             title: 'Tipo',
-            options: ['Vivienda', 'Oficina', 'Local'],
+            options: const ['Casa', 'Piso', 'Chalet'],
+            selectedOption: selectedType,
+            onSelected: (value) {
+              setState(() => selectedType = value);
+              _applyFilters();
+            },
           ),
-          const SizedBox(height: 10),
-          FilterDropdown(title: 'Habitaciones', options: ['1', '2', '3', '4+']),
-          const SizedBox(height: 10),
-          FilterDropdown(title: 'Baños', options: ['1', '2', '3+']),
-          const SizedBox(height: 10),
+
+          FilterDropdown(
+            title: 'Habitaciones',
+            options: const ['1', '2', '3', '4+'],
+            selectedOption: selectedBedrooms,
+            onSelected: (value) {
+              setState(() => selectedBedrooms = value);
+              _applyFilters();
+            },
+          ),
+
+          FilterDropdown(
+            title: 'Baños',
+            options: const ['1', '2', '3+'],
+            selectedOption: selectedBathrooms,
+            onSelected: (value) {
+              setState(() => selectedBathrooms = value);
+              _applyFilters();
+            },
+          ),
+
           FilterDropdown(
             title: 'Características',
-            options: ['Piscina', 'Jardín', 'Garaje'],
+            options: const ['Piscina', 'Jardín', 'Garaje'],
+            selectedOption: selectedFeature,
+            onSelected: (value) {
+              setState(() => selectedFeature = value);
+              _applyFilters();
+            },
+          ),
+
+          const SizedBox(height: 20),
+          // Botón Aplicar Filtros con color de la paleta
+          ElevatedButton(
+            onPressed: _applyFilters,
+            style: ElevatedButton.styleFrom(
+              backgroundColor: AppColors.primary, // color de la paleta
+              padding: const EdgeInsets.symmetric(vertical: 15),
+              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+            ),
+            child: const Text('Aplicar filtros', style: TextStyle(color: Colors.white)),
+          ),
+          // Botón Limpiar Filtros con color de la paleta
+          TextButton(
+            onPressed: _clearFilters,
+            child: Text(
+              'Limpiar filtros',
+              style: TextStyle(color: AppColors.primary), // color de la paleta
+            ),
           ),
         ],
       ),
@@ -84,58 +168,61 @@ class _FilterSidebarState extends State<FilterSidebar> {
   }
 }
 
-// -----------------------------
-// Dropdown funcional
-// -----------------------------
-class FilterDropdown extends StatefulWidget {
+class FilterDropdown extends StatelessWidget {
   final String title;
   final List<String> options;
+  final String? selectedOption;
+  final Function(String?) onSelected;
 
   const FilterDropdown({
-    required this.title,
-    this.options = const ['Opción 1', 'Opción 2', 'Opción 3'],
     super.key,
+    required this.title,
+    required this.options,
+    this.selectedOption,
+    required this.onSelected,
   });
 
   @override
-  State<FilterDropdown> createState() => _FilterDropdownState();
-}
-
-class _FilterDropdownState extends State<FilterDropdown> {
-  String? selectedValue;
-
-  @override
-  void initState() {
-    super.initState();
-    selectedValue = widget.options.first;
-  }
-
-  @override
   Widget build(BuildContext context) {
-    const Color primaryColor = Color(0xFF2F544D);
-
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
-      decoration: BoxDecoration(
-        color: primaryColor,
-        borderRadius: BorderRadius.circular(5),
-      ),
-      child: DropdownButtonHideUnderline(
-        child: DropdownButton<String>(
-          value: selectedValue,
-          dropdownColor: primaryColor,
-          icon: const Icon(Icons.keyboard_arrow_down, color: Colors.white),
-          style: const TextStyle(color: Colors.white, fontSize: 16),
-          items: widget.options
-              .map((opt) => DropdownMenuItem(value: opt, child: Text(opt)))
-              .toList(),
-          onChanged: (value) {
-            setState(() {
-              selectedValue = value;
-            });
-          },
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(title, style: const TextStyle(fontWeight: FontWeight.bold)),
+        Wrap(
+          spacing: 8,
+          children: options.map((option) {
+            final selected = selectedOption == option;
+            return ChoiceChip(
+              label: Text(option),
+              selected: selected,
+              onSelected: (_) => onSelected(selected ? null : option),
+              selectedColor: AppColors.primary,
+              backgroundColor: AppColors.background,
+              labelStyle: TextStyle(color: selected ? Colors.white : AppColors.primary),
+            );
+          }).toList(),
         ),
-      ),
+        const SizedBox(height: 10),
+      ],
     );
   }
+}
+
+// Clase de filtros
+class FilterData {
+  final int minPrice;
+  final int maxPrice;
+  final String? type;
+  final String? bedrooms;
+  final String? bathrooms;
+  final String? feature;
+
+  FilterData({
+    required this.minPrice,
+    required this.maxPrice,
+    this.type,
+    this.bedrooms,
+    this.bathrooms,
+    this.feature,
+  });
 }

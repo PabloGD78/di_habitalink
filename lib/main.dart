@@ -1,18 +1,25 @@
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'pages/home_page.dart';
 import 'pages/login_page.dart';
-import 'pages/register_page.dart'; // <-- 1. IMPORTAMOS LA PÁGINA DE REGISTRO
-import 'theme/colors.dart';
+import 'pages/register_page.dart';
 import 'pages/search_results_page.dart';
+import 'theme/colors.dart';
 
-void main() {
-  runApp(const MyApp());
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+
+  // Verificar si el usuario ya está logueado
+  final prefs = await SharedPreferences.getInstance();
+  final bool userLoggedIn = prefs.getBool('userLoggedIn') ?? false;
+
+  runApp(MyApp(userLoggedIn: userLoggedIn));
 }
 
-const Color kPrimaryColor = Color(0xFF2F544D);
-
 class MyApp extends StatelessWidget {
-  const MyApp({super.key});
+  final bool userLoggedIn; // parámetro obligatorio
+
+  const MyApp({super.key, required this.userLoggedIn});
 
   @override
   Widget build(BuildContext context) {
@@ -24,13 +31,12 @@ class MyApp extends StatelessWidget {
         appBarTheme: const AppBarTheme(backgroundColor: AppColors.primary),
         fontFamily: 'Roboto',
       ),
-
-      // 2. CONFIGURAMOS LAS RUTAS
-      initialRoute: '/',
+      // Ruta inicial según si el usuario está logueado
+      initialRoute: userLoggedIn ? '/' : '/login',
       routes: {
         '/': (context) => const HomePage(),
         '/login': (context) => const LoginPage(),
-        '/registro': (context) => const RegisterPage(), //3. AÑADIMOS LA RUTA
+        '/registro': (context) => const RegisterPage(),
         '/search_results': (context) => const SearchResultsPage(),
       },
     );

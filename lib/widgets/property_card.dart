@@ -8,6 +8,7 @@ class PropertyCard extends StatelessWidget {
   final String price;
   final double cardWidth;
   final double cardHeight;
+  final VoidCallback? onTap; // ← Nuevo parámetro opcional
 
   const PropertyCard({
     super.key,
@@ -16,6 +17,7 @@ class PropertyCard extends StatelessWidget {
     required this.price,
     required this.cardWidth,
     required this.cardHeight,
+    this.onTap, // ← Opcional, se llama al pulsar "más detalles"
   });
 
   @override
@@ -78,7 +80,8 @@ class PropertyCard extends StatelessWidget {
                   mainAxisAlignment: MainAxisAlignment.end,
                   children: [
                     TextButton(
-                      onPressed: () {},
+                      onPressed:
+                          onTap, // ← Llama a la función pasada desde afuera
                       style: TextButton.styleFrom(padding: EdgeInsets.zero),
                       child: const Row(
                         children: [

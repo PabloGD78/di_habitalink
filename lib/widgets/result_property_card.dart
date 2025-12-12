@@ -1,18 +1,19 @@
-// lib/widgets/result_property_card.dart
-
 import 'package:flutter/material.dart';
 import '../theme/colors.dart';
 
-// ⭐ CLASE RENOMBRADA: Para evitar el conflicto con PropertyCard ⭐
-class ResultPropertyCard extends StatelessWidget {
+class ResultPropertyCard extends StatefulWidget {
   final String imageUrl;
   final String title;
   final String price;
-  final String details; // Lo que usas en el listado
-
-  // ⭐ PARÁMETROS DE TAMAÑO AÑADIDOS (PARA COMPILAR CON EL ERROR) ⭐
+  final String details;
   final double cardWidth;
   final double cardHeight;
+  final VoidCallback? onDetailsPressed;
+
+  final Color backgroundColor;
+  final Color titleColor;
+  final Color detailsColor;
+  final Color priceColor;
 
   const ResultPropertyCard({
     super.key,
@@ -20,95 +21,81 @@ class ResultPropertyCard extends StatelessWidget {
     required this.title,
     required this.price,
     required this.details,
-    // AÑADIDOS PARA SATISFACER EL ERROR DE "MISSING REQUIRED ARGUMENT"
     required this.cardWidth,
     required this.cardHeight,
+    this.onDetailsPressed,
+    this.backgroundColor = const Color(0xFFF0E5D0),
+    this.titleColor = const Color(0xFF855227),
+    this.detailsColor = AppColors.hintTextColor,
+    this.priceColor = AppColors.primary,
   });
 
   @override
-  Widget build(BuildContext context) {
-    // Nota: Aunque los parámetros cardWidth y cardHeight están en el constructor
-    // no los estamos usando aquí para que la tarjeta se expanda en la lista
-    // de resultados. Usar estos valores aquí podría romper el diseño de listado.
+  State<ResultPropertyCard> createState() => _ResultPropertyCardState();
+}
 
+class _ResultPropertyCardState extends State<ResultPropertyCard> {
+  @override
+  Widget build(BuildContext context) {
     return Container(
+      width: widget.cardWidth,
+      height: widget.cardHeight,
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: widget.backgroundColor,
         borderRadius: BorderRadius.circular(10),
-        boxShadow: const [
-          BoxShadow(color: Colors.black12, blurRadius: 4, offset: Offset(0, 2)),
-        ],
+        boxShadow: const [BoxShadow(color: Colors.black12, blurRadius: 4, offset: Offset(0, 2))],
       ),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // 1. Imagen (Simulada para que se ajuste al listado)
           ClipRRect(
             borderRadius: BorderRadius.circular(8),
-            child: Container(
+            child: Image.asset(
+              widget.imageUrl,
               width: 200,
               height: 200,
-              color: Colors.grey[300],
-              alignment: Alignment.center,
-              child: const Icon(Icons.apartment, size: 50, color: Colors.grey),
+              fit: BoxFit.cover,
+              errorBuilder: (context, error, stackTrace) {
+                return Container(
+                  width: 200,
+                  height: 200,
+                  color: Colors.grey[300],
+                  alignment: Alignment.center,
+                  child: const Icon(Icons.broken_image, size: 50, color: Colors.grey),
+                );
+              },
             ),
           ),
           const SizedBox(width: 16),
-
-          // 2. Detalles del Inmueble
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(
-                  title,
-                  style: TextStyle(
-                    fontSize: 18,
-                    fontWeight: FontWeight.bold,
-                    color: AppColors.primary,
-                  ),
-                  maxLines: 2,
-                  overflow: TextOverflow.ellipsis,
-                ),
+                Text(widget.title,
+                    style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold, color: widget.titleColor),
+                    maxLines: 2,
+                    overflow: TextOverflow.ellipsis),
                 const SizedBox(height: 8),
-                Text(
-                  'Precio: $price',
-                  style: TextStyle(
-                    fontSize: 20,
-                    fontWeight: FontWeight.w800,
-                    color: AppColors.primary,
-                  ),
-                ),
+                Text('Precio: ${widget.price}',
+                    style: TextStyle(fontSize: 18, fontWeight: FontWeight.w800, color: widget.priceColor)),
                 const SizedBox(height: 8),
-                // MOSTRANDO EL CAMPO DETALLES
-                Text(
-                  details,
-                  style: const TextStyle(fontSize: 14, color: Colors.grey),
-                ),
-                const SizedBox(height: 12),
-
-                // Botones
+                Text(widget.details, style: TextStyle(fontSize: 14, color: widget.detailsColor)),
+                const Spacer(),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.end,
                   children: [
                     TextButton(
-                      onPressed: () {},
-                      child: Text(
-                        'Llamar',
-                        style: TextStyle(color: AppColors.primary),
-                      ),
+                      onPressed: widget.onDetailsPressed,
+                      child: Text('Más detalles ↗', style: TextStyle(color: AppColors.primary, fontWeight: FontWeight.bold)),
                     ),
+                    const SizedBox(width: 10),
+                    TextButton(onPressed: () {}, child: Text('Llamar', style: TextStyle(color: AppColors.primary))),
                     const SizedBox(width: 10),
                     ElevatedButton(
                       onPressed: () {},
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: AppColors.primary,
-                      ),
-                      child: const Text(
-                        'Contactar',
-                        style: TextStyle(color: Colors.white),
-                      ),
+                      style: ElevatedButton.styleFrom(backgroundColor: AppColors.primary),
+                      child: const Text('Contactar', style: TextStyle(color: Colors.white)),
                     ),
                   ],
                 ),

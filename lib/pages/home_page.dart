@@ -1,19 +1,46 @@
 import 'package:flutter/material.dart';
 import 'dart:math' as math;
+import 'package:shared_preferences/shared_preferences.dart';
 import '../theme/colors.dart';
-import '../widgets/nav_menu_item.dart';
 import '../widgets/search_bar_widget.dart';
 import '../widgets/property_card.dart';
 import '../widgets/footer_widget.dart';
+import '../pages/property_detail_page.dart';
+import '../pages/property_detail_page3.dart';
+import '../pages/new_listing_page.dart';
 
-class HomePage extends StatelessWidget {
+class HomePage extends StatefulWidget {
   const HomePage({super.key});
+
+  @override
+  State<HomePage> createState() => _HomePageState();
+}
+
+class _HomePageState extends State<HomePage> {
+  String? userName;
+
+  @override
+  void initState() {
+    super.initState();
+    _loadUser();
+  }
+
+  Future<void> _loadUser() async {
+    final prefs = await SharedPreferences.getInstance();
+    setState(() {
+      userName = prefs.getString('userName'); // null si no hay usuario
+    });
+  }
+
+  Future<void> _logout() async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.clear(); // Borra todos los datos de usuario
+    Navigator.pushReplacementNamed(context, '/login'); // Volver al login
+  }
 
   @override
   Widget build(BuildContext context) {
     final screenWidth = MediaQuery.of(context).size.width;
-
-    // Mantener ancho original de tarjetas
     final cardWidth = math.min(300.0, screenWidth * 0.25);
     final cardHeight = cardWidth * 1.5;
 
@@ -36,26 +63,56 @@ class HomePage extends StatelessWidget {
                     ),
                   ),
                   const Spacer(),
-                  ElevatedButton(
-                    onPressed: () {
-                      Navigator.pushNamed(context, '/login');
-                    },
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: AppColors.accent,
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(30),
+                  if (userName == null)
+                    ElevatedButton(
+                      onPressed: () {
+                        Navigator.pushNamed(context, '/login');
+                      },
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: AppColors.accent,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(30),
+                        ),
+                        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
                       ),
-                      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-                    ),
-                    child: const Text(
-                      'Iniciar sesión',
-                      style: TextStyle(
-                        color: AppColors.primary,
-                        fontWeight: FontWeight.bold,
-                        fontSize: 16,
+                      child: const Text(
+                        'Iniciar sesión',
+                        style: TextStyle(
+                          color: AppColors.primary,
+                          fontWeight: FontWeight.bold,
+                        ),
                       ),
+                    )
+                  else
+                    Row(
+                      children: [
+                        Text(
+                          'Hola, $userName',
+                          style: const TextStyle(
+                            color: AppColors.primary,
+                            fontWeight: FontWeight.bold,
+                            fontSize: 16,
+                          ),
+                        ),
+                        const SizedBox(width: 10),
+                        PopupMenuButton(
+                          onSelected: (value) {
+                            if (value == 'logout') _logout();
+                          },
+                          itemBuilder: (context) => [
+                            const PopupMenuItem(
+                              value: 'logout',
+                              child: Text('Cerrar sesión'),
+                            ),
+                          ],
+                          child: const CircleAvatar(
+                            radius: 25,
+                            backgroundColor: AppColors.primary,
+                            child: Icon(Icons.person, color: Colors.white),
+                          ),
+                        ),
+                      ],
                     ),
-                  ),
                 ],
               ),
             ),
@@ -64,11 +121,64 @@ class HomePage extends StatelessWidget {
               height: 40,
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceAround,
-                children: const [
-                  NavMenuItem(title: 'Comprar'),
-                  NavMenuItem(title: 'Alquilar'),
-                  NavMenuItem(title: 'Valoración'),
-                  NavMenuItem(title: 'Favoritos'),
+                children: [
+                  // Botón "Comprar"
+                  InkWell(
+                    onTap: () {
+                      // Aquí podrías agregar navegación si quieres
+                    },
+                    child: const Padding(
+                      padding: EdgeInsets.symmetric(horizontal: 10),
+                      child: Text(
+                        'Comprar',
+                        style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+                      ),
+                    ),
+                  ),
+                  // Botón "Anunciar"
+                  InkWell(
+                    onTap: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => const NewListingPage(),
+                        ),
+                      );
+                    },
+                    child: const Padding(
+                      padding: EdgeInsets.symmetric(horizontal: 10),
+                      child: Text(
+                        'Anunciar',
+                        style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+                      ),
+                    ),
+                  ),
+                  // Botón "Notificaciones"
+                  InkWell(
+                    onTap: () {
+                      // Aquí podrías agregar navegación si quieres
+                    },
+                    child: const Padding(
+                      padding: EdgeInsets.symmetric(horizontal: 10),
+                      child: Text(
+                        'Notificaciones',
+                        style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+                      ),
+                    ),
+                  ),
+                  // Botón "Favoritos"
+                  InkWell(
+                    onTap: () {
+                      // Aquí podrías agregar navegación si quieres
+                    },
+                    child: const Padding(
+                      padding: EdgeInsets.symmetric(horizontal: 10),
+                      child: Text(
+                        'Favoritos',
+                        style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+                      ),
+                    ),
+                  ),
                 ],
               ),
             ),
@@ -80,7 +190,6 @@ class HomePage extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // Texto centrado
             Center(
               child: Padding(
                 padding: const EdgeInsets.symmetric(horizontal: AppColors.kPadding),
@@ -96,15 +205,11 @@ class HomePage extends StatelessWidget {
               ),
             ),
             const SizedBox(height: 30),
-
-            // SearchBar alineada a la izquierda
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: AppColors.kPadding),
-            child: SizedBox(height: 60, child: const SearchBarWidget()),
+              child: SizedBox(height: 60, child: const SearchBarWidget()),
             ),
             const SizedBox(height: 40),
-
-            // Sección de exploración alineada a la izquierda
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: AppColors.kPadding),
               child: const Text(
@@ -120,8 +225,6 @@ class HomePage extends StatelessWidget {
               ),
             ),
             const SizedBox(height: 20),
-
-            // Lista Horizontal de Propiedades centrada
             SizedBox(
               height: cardHeight,
               child: LayoutBuilder(
@@ -129,7 +232,9 @@ class HomePage extends StatelessWidget {
                   final screenWidth = constraints.maxWidth;
                   final totalCardsWidth = 2 * cardWidth + AppColors.kMargin;
                   final horizontalPadding = (screenWidth - totalCardsWidth) / 2;
-                  final safePadding = horizontalPadding > AppColors.kPadding ? horizontalPadding : AppColors.kPadding;
+                  final safePadding = horizontalPadding > AppColors.kPadding
+                      ? horizontalPadding
+                      : AppColors.kPadding;
 
                   return SingleChildScrollView(
                     scrollDirection: Axis.horizontal,
@@ -138,11 +243,19 @@ class HomePage extends StatelessWidget {
                       child: Row(
                         children: [
                           PropertyCard(
-                            imageUrl: 'assets/engels_volkers/ref_w02zvw0/1.png',
+                            imageUrl: 'assets/italyca/ref_01360/1.png',
                             title: 'Casa Palacio en el corazón de Santa Cruz con gran Piscina',
                             price: '380.000€',
                             cardWidth: cardWidth,
                             cardHeight: cardHeight,
+                            onTap: () {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) => const PropertyDetailPage3(),
+                                ),
+                              );
+                            },
                           ),
                           const SizedBox(width: AppColors.kMargin),
                           PropertyCard(
@@ -151,6 +264,14 @@ class HomePage extends StatelessWidget {
                             price: '3.400.000€',
                             cardWidth: cardWidth,
                             cardHeight: cardHeight,
+                            onTap: () {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) => const PropertyDetailPage(),
+                                ),
+                              );
+                            },
                           ),
                         ],
                       ),
@@ -167,5 +288,3 @@ class HomePage extends StatelessWidget {
     );
   }
 }
-
-
